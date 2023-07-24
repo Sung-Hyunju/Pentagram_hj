@@ -1,0 +1,53 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Pentagram";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pentagram Drawing</title>
+</head>
+<body>
+    <canvas id="myCanvas" width="800" height="600" style="border:1px solid black;"></canvas>
+    <script>
+        // HTML Canvas 요소와 Context 가져오기
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // 오각별 저장하는 배열
+        const pentagons = [];
+
+        // 마우스 클릭 이벤트 리스너 등록
+        canvas.addEventListener('click', drawPentagram);
+
+        function drawPentagram(event) {
+            // 마우스 클릭 위치를 canvas 내부 좌표로 변환
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+
+            pentagons.push({ x: mouseX, y: mouseY });
+
+            // 오각별 그리기
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            var radius = 100;
+            ctx.beginPath();
+            ctx.strokeStyle = '#000000';
+            for (const pentagon of pentagons) {
+                ctx.moveTo(pentagon.x + radius * Math.cos(-Math.PI / 2), pentagon.y + radius * Math.sin(-Math.PI / 2));
+                for (var i = 1; i <= 5; ++i) {
+                    var th = -Math.PI / 2 + i * 4 * Math.PI / 5;
+                    var x = pentagon.x + radius * Math.cos(th);
+                    var y = pentagon.y + radius * Math.sin(th);
+                    ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+            }
+            ctx.lineJoin = 'miter';
+            ctx.stroke();
+        }
+    </script>
+</body>
+</html>
